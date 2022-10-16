@@ -11,7 +11,6 @@ import {
     Image,
     NavLink,
 } from '@mantine/core'
-import { IconArrowLeft } from '@tabler/icons'
 import LocationSkeleton from '../../components/ReusableLoader/LocationSkeleton'
 
 export async function getStaticPaths() {
