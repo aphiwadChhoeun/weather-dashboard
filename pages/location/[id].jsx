@@ -9,9 +9,10 @@ import {
     Stack,
     Group,
     Image,
-    NavLink,
 } from '@mantine/core'
 import LocationSkeleton from '../../components/ReusableLoader/LocationSkeleton'
+import { useLocation } from '../../hooks/GeoLocation/useLocation';
+import { useWeather } from '../../hooks/GeoLocation/useWeather';
 
 export async function getStaticPaths() {
     const paths = locations.map((location) => ({
@@ -28,11 +29,6 @@ export async function getStaticProps(context) {
     }
 }
 
-export const fetchLatLng = (city) => {
-    return fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${'15f7316707a06d2fa846b57979e19855'}`)
-        .then(res => res.json())
-}
-
 const capitalizedWords = (text) => {
     let words = text.split(' ')
     words = words.map(word => {
@@ -44,13 +40,23 @@ const capitalizedWords = (text) => {
     return words.join(' ')
 }
 
+const getLocaleTime = (weather) => {
+    let d = new Date()
+    let utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds())
+
+    let locationTime = new Date()
+    locationTime.setTime(utcDate.getTime() + (weather.timezone * 1000))
+
+    return locationTime.toLocaleString()
+}
+
 const LocationPage = (props) => {
     let { data: location } = props
-    let { isLoading, data: weatherData } = useQuery(['GeoLocation', location.id],
-        () => fetchLatLng(location.name),
-        {
-            staleTime: 10 * 60 * 1000
-        })
+    let { data: latLng } = useLocation(location.name)
+
+    let { isLoading, data: weatherData } = useWeather(latLng?.[0], {
+        enabled: !!latLng
+    })
 
     const loadingSkeleton = (
         <LocationSkeleton />
@@ -59,16 +65,6 @@ const LocationPage = (props) => {
     const backLink = (
         <BackLink />
     )
-
-    let locationTime
-    if (!isLoading) {
-        let d = new Date()
-        let utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds())
-
-        console.log(utcDate.getHours(), ':', utcDate.getMinutes())
-        locationTime = new Date()
-        locationTime.setTime(utcDate.getTime() + (weatherData.timezone * 1000))
-    }
 
     return (
         <Layout appBar={backLink}>
@@ -89,7 +85,7 @@ const LocationPage = (props) => {
                                         {location.name}
                                     </Text>
                                     <Text>
-                                        {locationTime.toLocaleString()}
+                                        {getLocaleTime(weatherData)}
                                     </Text>
                                 </Group>
                                 <Group position='apart'>
