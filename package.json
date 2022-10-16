@@ -6,8 +6,16 @@
     "start": "next start"
   },
   "dependencies": {
+    "@mantine/core": "^5.5.5",
+    "@mantine/hooks": "^5.5.5",
+    "@mantine/next": "^5.5.5",
+    "@tabler/icons": "^1.104.0",
+    "@tanstack/react-query": "^4.12.0",
     "next": "latest",
     "react": "17.0.2",
     "react-dom": "17.0.2"
+  },
+  "devDependencies": {
+    "prettier": "2.7.1"
   }
 }

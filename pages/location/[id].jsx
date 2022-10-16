@@ -1,0 +1,108 @@
+import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
+import locations from '../../data/locations.json'
+import Layout from '../../components/layout'
+import {
+    Container,
+    Card,
+    Text,
+    Stack,
+    Group,
+    Image,
+    NavLink,
+    Loader
+} from '@mantine/core'
+import { IconArrowLeft } from '@tabler/icons'
+
+export async function getStaticPaths() {
+    const paths = locations.map((location) => ({
+        params: { id: location.id },
+    }))
+
+    return { paths, fallback: false }
+}
+
+export async function getStaticProps(context) {
+    let { id } = context.params
+    return {
+        props: { data: locations.find(item => item.id === id) },
+    }
+}
+
+export const fetchLatLng = (city) => {
+    return fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${'15f7316707a06d2fa846b57979e19855'}`)
+        .then(res => res.json())
+}
+
+const LocationPage = (props) => {
+    let { data } = props
+    let { isLoading, data: geoLocation } = useQuery(['GeoLocation', data.id],
+        () => fetchLatLng(data.name),
+        {
+            staleTime: 10 * 60 * 1000
+        })
+
+    if (isLoading) {
+        return (
+            <Loader />
+        )
+    }
+
+    const backLink = (
+        <Link href="/">
+            <NavLink
+                icon={(<IconArrowLeft />)}
+                component="a"
+                label="Back" />
+        </Link>
+    )
+
+    return (
+        <Layout appBar={backLink}>
+            <Container>
+                <Card withBorder p="lg">
+                    <Text size={64}>{data.name}</Text>
+
+                    <Stack>
+                        <Group>
+                            <Text
+                                size={36}
+                            >
+                                {geoLocation.main.temp}°F
+                            </Text>
+                        </Group>
+                        <div style={{ width: '8rem' }}>
+                            <Image
+                                alt={geoLocation.weather[0].description}
+                                src={'http://openweathermap.org/img/wn/' + geoLocation.weather[0].icon + '@2x.png'} />
+                        </div>
+                        <Group position='apart'>
+                            <Stack>
+                                <Text
+                                    size={24}
+                                    color='dimmed'>Humidty</Text>
+                                <Text
+                                    size={24}
+                                    color='light'>
+                                    {geoLocation.main.humidity}
+                                </Text>
+                            </Stack>
+                            <Stack>
+                                <Text
+                                    size={24}
+                                    color='dimmed'>Wind</Text>
+                                <Text
+                                    size={24}
+                                    color='light'>
+                                    {geoLocation.wind.speed}
+                                </Text>
+                            </Stack>
+                        </Group>
+                    </Stack>
+                </Card>
+            </Container>
+        </Layout>
+    )
+}
+
+export default LocationPage

@@ -1,0 +1,26 @@
+[
+    {
+        "id": "san-francisco",
+        "name": "San Francisco"
+    },
+    {
+        "id": "seattle",
+        "name": "Seattle"
+    },
+    {
+        "id": "new-york",
+        "name": "New York"
+    },
+    {
+        "id": "chicago",
+        "name": "Chicago"
+    },
+    {
+        "id": "texax",
+        "name": "Texas"
+    },
+    {
+        "id": "phnom-penh",
+        "name": "Phnom Penh"
+    }
+]
