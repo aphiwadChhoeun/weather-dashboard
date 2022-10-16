@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { Container, SimpleGrid, Loader } from '@mantine/core'
+import { Container, Grid } from '@mantine/core'
 import DashboardItem from '../DashboardItem/DashboardItem.jsx'
+import ReusableLoader from '../ReusableLoader/ReusableLoader.jsx'
 
 export const fetchLocations = () => {
     return fetch('/api/dashboard')
@@ -12,7 +13,7 @@ const Dashboard = (props) => {
 
     if (isLoading) {
         return (
-            <Loader />
+            <ReusableLoader />
         )
     }
 
@@ -20,13 +21,15 @@ const Dashboard = (props) => {
 
     return (
         <Container>
-            <SimpleGrid cols={3}>
+            <Grid>
                 {locations.map((item, index) => {
                     return (
-                        <DashboardItem key={index} location={item} />
+                        <Grid.Col sm={6} md={4} lg={2}>
+                            <DashboardItem key={index} location={item} />
+                        </Grid.Col>
                     )
                 })}
-            </SimpleGrid>
+            </Grid>
         </Container>
     )
 }

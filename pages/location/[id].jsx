@@ -10,9 +10,9 @@ import {
     Group,
     Image,
     NavLink,
-    Loader
 } from '@mantine/core'
 import { IconArrowLeft } from '@tabler/icons'
+import LocationSkeleton from '../../components/ReusableLoader/LocationSkeleton'
 
 export async function getStaticPaths() {
     const paths = locations.map((location) => ({
@@ -34,6 +34,17 @@ export const fetchLatLng = (city) => {
         .then(res => res.json())
 }
 
+const capitalizedWords = (text) => {
+    let words = text.split(' ')
+    words = words.map(word => {
+        let temp = word
+        temp = temp[0].toUpperCase() + temp.substring(1)
+        return temp
+    })
+
+    return words.join(' ')
+}
+
 const LocationPage = (props) => {
     let { data } = props
     let { isLoading, data: geoLocation } = useQuery(['GeoLocation', data.id],
@@ -42,11 +53,9 @@ const LocationPage = (props) => {
             staleTime: 10 * 60 * 1000
         })
 
-    if (isLoading) {
-        return (
-            <Loader />
-        )
-    }
+    const loadingSkeleton = (
+        <LocationSkeleton />
+    )
 
     const backLink = (
         <Link href="/">
@@ -61,44 +70,53 @@ const LocationPage = (props) => {
         <Layout appBar={backLink}>
             <Container>
                 <Card withBorder p="lg">
-                    <Text size={64}>{data.name}</Text>
 
-                    <Stack>
-                        <Group>
-                            <Text
-                                size={36}
-                            >
-                                {geoLocation.main.temp}°F
-                            </Text>
-                        </Group>
-                        <div style={{ width: '8rem' }}>
-                            <Image
-                                alt={geoLocation.weather[0].description}
-                                src={'http://openweathermap.org/img/wn/' + geoLocation.weather[0].icon + '@2x.png'} />
-                        </div>
-                        <Group position='apart'>
+                    {isLoading ? (
+                        loadingSkeleton
+                    ) : (
+                        <>
+                            <Text size={64}>{data.name}</Text>
+
                             <Stack>
-                                <Text
-                                    size={24}
-                                    color='dimmed'>Humidty</Text>
-                                <Text
-                                    size={24}
-                                    color='light'>
-                                    {geoLocation.main.humidity}
-                                </Text>
+                                <Group>
+                                    <Text
+                                        size={36}
+                                    >
+                                        {geoLocation.main.temp}°F
+                                    </Text>
+                                </Group>
+                                <Group position='apart'>
+                                    <div style={{ width: '5rem' }}>
+                                        <Image
+                                            alt={geoLocation.weather[0].description}
+                                            src={'http://openweathermap.org/img/wn/' + geoLocation.weather[0].icon + '@2x.png'} />
+                                    </div>
+                                    <Text>{capitalizedWords(geoLocation.weather[0].description)}</Text>
+                                </Group>
+                                <Group position='apart'>
+                                    <Stack>
+                                        <Text
+                                            size={24}
+                                            color='dimmed'>Humidty</Text>
+                                        <Text
+                                            size={24}
+                                            color='light'>
+                                            {geoLocation.main.humidity}
+                                        </Text>
+                                    </Stack>
+                                    <Stack>
+                                        <Text
+                                            size={24}
+                                            color='dimmed'>Wind</Text>
+                                        <Text
+                                            size={24}
+                                            color='light'>
+                                            {geoLocation.wind.speed}
+                                        </Text>
+                                    </Stack>
+                                </Group>
                             </Stack>
-                            <Stack>
-                                <Text
-                                    size={24}
-                                    color='dimmed'>Wind</Text>
-                                <Text
-                                    size={24}
-                                    color='light'>
-                                    {geoLocation.wind.speed}
-                                </Text>
-                            </Stack>
-                        </Group>
-                    </Stack>
+                        </>)}
                 </Card>
             </Container>
         </Layout>
