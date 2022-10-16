@@ -69,14 +69,14 @@ const LocationPage = (props) => {
                         loadingSkeleton
                     ) : (
                         <>
-                            <Text size={64}>{data.name}</Text>
+                            <Text size={64}>{geoLocation.main.temp}°F</Text>
 
                             <Stack>
                                 <Group>
                                     <Text
                                         size={36}
                                     >
-                                        {geoLocation.main.temp}°F
+                                        {data.name}
                                     </Text>
                                 </Group>
                                 <Group position='apart'>
