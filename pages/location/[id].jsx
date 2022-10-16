@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import BackLink from './../../components/BackLink/BackLink';
 import { useQuery } from '@tanstack/react-query'
 import locations from '../../data/locations.json'
 import Layout from '../../components/layout'
@@ -58,12 +58,7 @@ const LocationPage = (props) => {
     )
 
     const backLink = (
-        <Link href="/">
-            <NavLink
-                icon={(<IconArrowLeft />)}
-                component="a"
-                label="Back" />
-        </Link>
+        <BackLink />
     )
 
     return (
