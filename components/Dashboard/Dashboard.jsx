@@ -24,7 +24,7 @@ const Dashboard = (props) => {
             <Grid>
                 {locations.map((item) => {
                     return (
-                        <Grid.Col sm={6} md={4} lg={2} key={item.id}>
+                        <Grid.Col sm={6} md={4} key={item.id}>
                             <DashboardItem location={item} />
                         </Grid.Col>
                     )
