@@ -84,7 +84,7 @@ const LocationPage = (props) => {
                             </Card.Section>
 
                             <Group position='apart'>
-                                <Text size={64}>{weatherData.main.temp}<sup>°F</sup></Text>
+                                <Text size={64} weight={'bold'}>{weatherData.main.temp}<sup>°F</sup></Text>
                                 <Stack>
                                     <Group>
                                         <Text>{weatherData.main.temp_max}<sup>°F</sup></Text>
