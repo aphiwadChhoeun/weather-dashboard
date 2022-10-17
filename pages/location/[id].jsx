@@ -12,7 +12,13 @@ import {
 import LocationSkeleton from '../../components/ReusableLoader/LocationSkeleton'
 import { useLocation } from '../../hooks/GeoLocation/useLocation';
 import { useWeather } from '../../hooks/GeoLocation/useWeather';
-import { IconArrowDown, IconArrowUp } from '@tabler/icons';
+import {
+    IconSunrise,
+    IconSunset,
+    IconTemperatureFahrenheit,
+    IconTemperatureMinus,
+    IconTemperaturePlus
+} from '@tabler/icons';
 
 export async function getStaticPaths() {
     const paths = locations.map((location) => ({
@@ -40,14 +46,23 @@ const capitalizedWords = (text) => {
     return words.join(' ')
 }
 
-const getLocaleTime = (weather) => {
-    let d = new Date()
-    let utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds())
+const getLocaleTime = (offset, base = null) => {
+    let baseDate
+    if (!base) {
+        let d = new Date()
+        baseDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds())
+    } else {
+        baseDate = base
+    }
 
-    let locationTime = new Date()
-    locationTime.setTime(utcDate.getTime() + (weather.timezone * 1000))
+    let localeTime = getDate(baseDate.getTime() + (offset * 1000) + (base ? (baseDate.getTimezoneOffset() * 60000) : 0))
+    return localeTime
+}
 
-    return locationTime.toLocaleString()
+const getDate = (dt) => {
+    let d = new Date(dt)
+
+    return d
 }
 
 const LocationPage = (props) => {
@@ -84,15 +99,15 @@ const LocationPage = (props) => {
                             </Card.Section>
 
                             <Group position='apart'>
-                                <Text size={64} weight={'bold'}>{weatherData.main.temp}<sup>°F</sup></Text>
+                                <Text size={64} weight={'bold'}>{weatherData.main.temp}<IconTemperatureFahrenheit size={64} /></Text>
                                 <Stack>
                                     <Group>
-                                        <Text>{weatherData.main.temp_max}<sup>°F</sup></Text>
-                                        <IconArrowUp />
+                                        <Text>{weatherData.main.temp_max}<IconTemperatureFahrenheit size={18} /></Text>
+                                        <IconTemperaturePlus />
                                     </Group>
                                     <Group>
-                                        <Text>{weatherData.main.temp_min}<sup>°F</sup></Text>
-                                        <IconArrowDown />
+                                        <Text>{weatherData.main.temp_min}<IconTemperatureFahrenheit size={18} /></Text>
+                                        <IconTemperatureMinus />
                                     </Group>
                                 </Stack>
                             </Group>
@@ -105,8 +120,14 @@ const LocationPage = (props) => {
                                         {location.name}
                                     </Text>
                                     <Text>
-                                        {getLocaleTime(weatherData)}
+                                        {getLocaleTime(weatherData.timezone).toLocaleString()}
                                     </Text>
+                                </Group>
+                                <Group>
+                                    <IconSunrise />
+                                    <Text>{getLocaleTime(weatherData.timezone, new Date(weatherData.sys.sunrise * 1000)).toLocaleTimeString()}</Text>
+                                    <IconSunset />
+                                    <Text>{getLocaleTime(weatherData.timezone, new Date(weatherData.sys.sunset * 1000)).toLocaleTimeString()}</Text>
                                 </Group>
                                 <Group position='apart'>
                                     <div style={{ width: '5rem' }}>
@@ -124,7 +145,7 @@ const LocationPage = (props) => {
                                         <Text
                                             size={24}
                                             color='light'>
-                                            {weatherData.main.humidity}
+                                            {weatherData.main.humidity} %
                                         </Text>
                                     </Stack>
                                     <Stack>

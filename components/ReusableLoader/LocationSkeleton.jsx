@@ -13,6 +13,9 @@ const LocationSkeleton = () => {
                 <Group>
                     <Skeleton height={36} />
                 </Group>
+                <Group>
+                    <Skeleton height={24} />
+                </Group>
                 <Group position='apart'>
                     <Skeleton height={100} circle />
                     <Skeleton height={50} width={'50%'} />
