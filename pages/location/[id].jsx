@@ -7,7 +7,6 @@ import {
     Text,
     Stack,
     Group,
-    Image,
 } from '@mantine/core'
 import LocationSkeleton from '../../components/ReusableLoader/LocationSkeleton'
 import { useLocation } from '../../hooks/useLocation';
@@ -15,10 +14,14 @@ import { useWeather } from '../../hooks/useWeather';
 import {
     IconSunrise,
     IconSunset,
-    IconTemperatureFahrenheit,
     IconTemperatureMinus,
     IconTemperaturePlus
 } from '@tabler/icons';
+import StaticMap from '../../components/StaticMap/StaticMap';
+import TemperatureDisplay from '../../components/TemperatureDisplay/TemperatureDisplay';
+import WeatherImage from '../../components/WeatherImage/WeatherImage';
+import LocaleTime from '../../components/LocaleTime/LocaleTime';
+import WeatherDescription from '../../components/WeatherDescription/WeatherDescription';
 
 export async function getStaticPaths() {
     const paths = locations.map((location) => ({
@@ -33,36 +36,6 @@ export async function getStaticProps(context) {
     return {
         props: { data: locations.find(item => item.id === id) },
     }
-}
-
-const capitalizedWords = (text) => {
-    let words = text.split(' ')
-    words = words.map(word => {
-        let temp = word
-        temp = temp[0].toUpperCase() + temp.substring(1)
-        return temp
-    })
-
-    return words.join(' ')
-}
-
-const getLocaleTime = (offset, base = null) => {
-    let baseDate
-    if (!base) {
-        let d = new Date()
-        baseDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds())
-    } else {
-        baseDate = base
-    }
-
-    let localeTime = getDate(baseDate.getTime() + (offset * 1000) + (base ? (baseDate.getTimezoneOffset() * 60000) : 0))
-    return localeTime
-}
-
-const getDate = (dt) => {
-    let d = new Date(dt)
-
-    return d
 }
 
 const LocationPage = (props) => {
@@ -90,23 +63,21 @@ const LocationPage = (props) => {
                         loadingSkeleton
                     ) : (
                         <>
-
-                            <Card.Section mt={'-lg'}>
-                                <Image
-                                    src={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/${[weatherData.coord.lon, weatherData.coord.lat].join(',')},12/928x320?access_token=pk.eyJ1IjoidmljMjIxYiIsImEiOiJjaXVhOHRxZWYwMDF6MnlsNzluZTNwMjc5In0.lShEWLac8O5NTy8QQAwTxQ`}
-                                    height={320}
-                                    alt={'Map of ' + weatherData.name} />
-                            </Card.Section>
-
                             <Group position='apart'>
-                                <Text size={64} weight={'bold'}>{weatherData.main.temp}<IconTemperatureFahrenheit size={64} /></Text>
+                                <TemperatureDisplay size={64} weight={'bold'}>
+                                    {weatherData.main.temp}
+                                </TemperatureDisplay>
                                 <Stack>
                                     <Group>
-                                        <Text>{weatherData.main.temp_max}<IconTemperatureFahrenheit size={18} /></Text>
+                                        <TemperatureDisplay>
+                                            {weatherData.main.temp_max}
+                                        </TemperatureDisplay>
                                         <IconTemperaturePlus />
                                     </Group>
                                     <Group>
-                                        <Text>{weatherData.main.temp_min}<IconTemperatureFahrenheit size={18} /></Text>
+                                        <TemperatureDisplay>
+                                            {weatherData.main.temp_min}
+                                        </TemperatureDisplay>
                                         <IconTemperatureMinus />
                                     </Group>
                                 </Stack>
@@ -119,23 +90,20 @@ const LocationPage = (props) => {
                                     >
                                         {location.name}
                                     </Text>
-                                    <Text>
-                                        {getLocaleTime(weatherData.timezone).toLocaleString()}
-                                    </Text>
+                                    <LocaleTime offset={weatherData.timezone} />
                                 </Group>
                                 <Group>
                                     <IconSunrise />
-                                    <Text>{getLocaleTime(weatherData.timezone, new Date(weatherData.sys.sunrise * 1000)).toLocaleTimeString()}</Text>
+                                    <LocaleTime offset={weatherData.timezone} timestamp={weatherData.sys.sunrise * 1000} />
+
                                     <IconSunset />
-                                    <Text>{getLocaleTime(weatherData.timezone, new Date(weatherData.sys.sunset * 1000)).toLocaleTimeString()}</Text>
+                                    <LocaleTime offset={weatherData.timezone} timestamp={weatherData.sys.sunset * 1000} />
                                 </Group>
                                 <Group position='apart'>
                                     <div style={{ width: '5rem' }}>
-                                        <Image
-                                            alt={weatherData.weather[0].description}
-                                            src={'http://openweathermap.org/img/wn/' + weatherData.weather[0].icon + '@2x.png'} />
+                                        <WeatherImage weatherData={weatherData.weather[0]} />
                                     </div>
-                                    <Text>{capitalizedWords(weatherData.weather[0].description)}</Text>
+                                    <WeatherDescription text={weatherData.weather[0].description} />
                                 </Group>
                                 <Group position='apart'>
                                     <Stack>
@@ -160,6 +128,10 @@ const LocationPage = (props) => {
                                     </Stack>
                                 </Group>
                             </Stack>
+
+                            <Card.Section mt={'md'} mb={'-lg'}>
+                                <StaticMap weatherData={weatherData} size={[928, 280]} />
+                            </Card.Section>
                         </>)}
                 </Card>
             </Container>
