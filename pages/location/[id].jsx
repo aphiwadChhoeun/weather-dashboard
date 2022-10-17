@@ -10,8 +10,8 @@ import {
     Image,
 } from '@mantine/core'
 import LocationSkeleton from '../../components/ReusableLoader/LocationSkeleton'
-import { useLocation } from '../../hooks/GeoLocation/useLocation';
-import { useWeather } from '../../hooks/GeoLocation/useWeather';
+import { useLocation } from '../../hooks/useLocation';
+import { useWeather } from '../../hooks/useWeather';
 import {
     IconSunrise,
     IconSunset,
