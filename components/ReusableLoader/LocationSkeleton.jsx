@@ -1,8 +1,12 @@
-import { Skeleton, Stack, Group, Space } from "@mantine/core"
+import { Skeleton, Stack, Group, Card } from "@mantine/core"
 
 const LocationSkeleton = () => {
     return (
         <>
+            <Card.Section mt={-20} mb={20}>
+                <Skeleton height={320} />
+            </Card.Section>
+
             <Skeleton height={64} />
 
             <Stack mt={15}>

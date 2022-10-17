@@ -4,20 +4,20 @@
         "name": "San Francisco"
     },
     {
-        "id": "seattle",
-        "name": "Seattle"
+        "id": "beijing",
+        "name": "Beijing"
     },
     {
-        "id": "new-york",
-        "name": "New York"
+        "id": "paris",
+        "name": "Paris"
     },
     {
-        "id": "chicago",
-        "name": "Chicago"
+        "id": "manila",
+        "name": "Manila"
     },
     {
-        "id": "texax",
-        "name": "Texas"
+        "id": "tokyo",
+        "name": "Tokyo"
     },
     {
         "id": "phnom-penh",

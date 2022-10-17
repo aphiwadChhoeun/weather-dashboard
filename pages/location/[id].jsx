@@ -1,5 +1,4 @@
 import BackLink from './../../components/BackLink/BackLink';
-import { useQuery } from '@tanstack/react-query'
 import locations from '../../data/locations.json'
 import Layout from '../../components/layout'
 import {
@@ -13,6 +12,7 @@ import {
 import LocationSkeleton from '../../components/ReusableLoader/LocationSkeleton'
 import { useLocation } from '../../hooks/GeoLocation/useLocation';
 import { useWeather } from '../../hooks/GeoLocation/useWeather';
+import { IconArrowDown, IconArrowUp } from '@tabler/icons';
 
 export async function getStaticPaths() {
     const paths = locations.map((location) => ({
@@ -69,13 +69,33 @@ const LocationPage = (props) => {
     return (
         <Layout appBar={backLink}>
             <Container>
-                <Card withBorder p="lg">
+                <Card withBorder shadow="sm" p="lg">
 
                     {isLoading ? (
                         loadingSkeleton
                     ) : (
                         <>
-                            <Text size={64}>{weatherData.main.temp}°F</Text>
+
+                            <Card.Section mt={'-lg'}>
+                                <Image
+                                    src={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/${[weatherData.coord.lon, weatherData.coord.lat].join(',')},12/928x320?access_token=pk.eyJ1IjoidmljMjIxYiIsImEiOiJjaXVhOHRxZWYwMDF6MnlsNzluZTNwMjc5In0.lShEWLac8O5NTy8QQAwTxQ`}
+                                    height={320}
+                                    alt={'Map of ' + weatherData.name} />
+                            </Card.Section>
+
+                            <Group position='apart'>
+                                <Text size={64}>{weatherData.main.temp}<sup>°F</sup></Text>
+                                <Stack>
+                                    <Group>
+                                        <Text>{weatherData.main.temp_max}<sup>°F</sup></Text>
+                                        <IconArrowUp />
+                                    </Group>
+                                    <Group>
+                                        <Text>{weatherData.main.temp_min}<sup>°F</sup></Text>
+                                        <IconArrowDown />
+                                    </Group>
+                                </Stack>
+                            </Group>
 
                             <Stack>
                                 <Group position='apart'>
@@ -114,7 +134,7 @@ const LocationPage = (props) => {
                                         <Text
                                             size={24}
                                             color='light'>
-                                            {weatherData.wind.speed}
+                                            {weatherData.wind.speed} mph
                                         </Text>
                                     </Stack>
                                 </Group>
