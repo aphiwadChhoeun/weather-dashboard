@@ -7,7 +7,7 @@ export const fetchWeather = async (latLng) => {
 }
 
 export function useWeather(latLng, options = {}) {
-    let { isLoading, isError, data } = useQuery(
+    let result = useQuery(
         ['Weather', latLng?.lat, latLng?.lon],
         () => fetchWeather(latLng),
         {
@@ -15,5 +15,5 @@ export function useWeather(latLng, options = {}) {
             staleTime: 10 * 60 * 1000
         })
 
-    return { isLoading, isError, data }
+    return result
 }

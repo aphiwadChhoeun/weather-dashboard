@@ -1,5 +1,4 @@
-import BackLink from './../../components/BackLink/BackLink';
-import locations from '../../data/locations.json'
+import BackLink from '../../components/BackLink/BackLink';
 import Layout from '../../components/layout'
 import {
     Container,
@@ -22,28 +21,23 @@ import TemperatureDisplay from '../../components/TemperatureDisplay/TemperatureD
 import WeatherImage from '../../components/WeatherImage/WeatherImage';
 import LocaleTime from '../../components/LocaleTime/LocaleTime';
 import WeatherDescription from '../../components/WeatherDescription/WeatherDescription';
-
-export async function getStaticPaths() {
-    const paths = locations.map((location) => ({
-        params: { id: location.id },
-    }))
-
-    return { paths, fallback: false }
-}
-
-export async function getStaticProps(context) {
-    let { id } = context.params
-    return {
-        props: { data: locations.find(item => item.id === id) },
-    }
-}
+import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 
 const LocationPage = (props) => {
-    let { data: location } = props
-    let { data: latLng } = useLocation(location.name)
+    const { query: { location: locationParams } } = useRouter()
+    const latlon = useMemo(() => {
+        if (!locationParams) return null
 
-    let { isLoading, data: weatherData } = useWeather(latLng?.[0], {
-        enabled: !!latLng
+        let temp = locationParams.split(',')
+        return {
+            lat: temp[0],
+            lon: temp[1]
+        }
+    }, [locationParams])
+
+    let { isLoading, data: weatherData } = useWeather(latlon, {
+        enabled: !!latlon
     })
 
     const loadingSkeleton = (
@@ -88,7 +82,7 @@ const LocationPage = (props) => {
                                     <Text
                                         size={36}
                                     >
-                                        {location.name}
+                                        {weatherData.name}
                                     </Text>
                                     <LocaleTime offset={weatherData.timezone} />
                                 </Group>

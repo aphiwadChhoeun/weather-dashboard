@@ -1,10 +1,10 @@
 import Layout from '../components/layout'
-import Dashboard from '../components/Dashboard/Dashboard'
+import LocationSearch from '../components/LocationSearch/LocationSearch'
 
 export default function Home() {
   return (
     <Layout>
-      <Dashboard />
+      <LocationSearch />
     </Layout>
   )
 }
