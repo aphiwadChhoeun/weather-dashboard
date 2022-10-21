@@ -6,7 +6,7 @@ const StaticMap = (props) => {
 
     return (
         <Image
-            src={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/${[lon, lat].join(',')},12/${width}x${height}?access_token=pk.eyJ1IjoidmljMjIxYiIsImEiOiJjaXVhOHRxZWYwMDF6MnlsNzluZTNwMjc5In0.lShEWLac8O5NTy8QQAwTxQ`}
+            src={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/${[lon, lat].join(',')},12/${width}x${height}?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}`}
             height={320}
             alt={'Map of ' + name} />
     )
