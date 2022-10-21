@@ -2,11 +2,11 @@ import { Container, Center, Loader } from '@mantine/core'
 
 const ReusableLoader = () => {
     return (
-        <Container>
+        <div>
             <Center>
-                <Loader />
+                <Loader variant="dots" />
             </Center>
-        </Container>
+        </div>
     )
 }
 

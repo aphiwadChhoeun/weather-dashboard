@@ -4,6 +4,7 @@ import { IconHome2, IconSearch } from "@tabler/icons"
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useLocation } from "../../hooks/useLocation";
+import ReusableLoader from "../ReusableLoader/ReusableLoader";
 import LocationResult from "./LocationResult";
 
 const LocationSearch = (props) => {
@@ -48,7 +49,7 @@ const LocationSearch = (props) => {
                 {!!query ? (
                     <div>
                         {isLoading ?
-                            (<div>Loading...</div>) :
+                            (<ReusableLoader />) :
                             <LocationResult
                                 locations={data}
                                 locationHandler={searchResultHandler}
